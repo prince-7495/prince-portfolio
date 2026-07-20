@@ -1,0 +1,138 @@
+.contact {
+  background: linear-gradient(160deg, #f8fafc 0%, #ede9fe 100%);
+}
+
+.contact-cards {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+}
+
+.contact-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contact-lead {
+  font-size: 1.02rem;
+  color: #475569;
+  line-height: 1.8;
+}
+
+.contact-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.contact-method {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  color: inherit;
+}
+
+.contact-method:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+  border-color: #bae6fd;
+}
+
+.method-icon {
+  font-size: 1.3rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.contact-method div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.method-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.method-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contact-info-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: #475569;
+}
+
+.info-icon {
+  font-size: 1.1rem;
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.contact-cta-btn {
+  display: block;
+  text-align: center;
+  padding: 14px 20px;
+  background: linear-gradient(90deg, #0ea5e9, #6366f1);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+  margin-top: auto;
+}
+
+.contact-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+}
+
+@media (max-width: 860px) {
+  .contact-cards {
+    grid-template-columns: 1fr;
+  }
+}

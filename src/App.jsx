@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import Navbar from './components/Navbar'
@@ -9,9 +9,28 @@ import ProjectsPage from './pages/ProjectsPage'
 import ContactPage from './pages/ContactPage'
 import NotFound from './pages/NotFound'
 import GithubRepos from './pages/GithubRepos'
+import TodoPage from './pages/TodoPage'
+
+const TODO_STORAGE_KEY = 'portfolio-todos'
+
+/** Read active-task count directly from localStorage so the badge is correct on first render */
+function loadActiveTodoCount() {
+  try {
+    const tasks = JSON.parse(localStorage.getItem(TODO_STORAGE_KEY)) || []
+    return tasks.filter((t) => !t.completed).length
+  } catch {
+    return 0
+  }
+}
 
 function App() {
   const [theme, setTheme] = useState('light')
+  const [activeTodoCount, setActiveTodoCount] = useState(loadActiveTodoCount)
+
+  // Stable callback so TodoPage's useEffect dependency never causes extra renders
+  const handleTaskCountChange = useCallback((count) => {
+    setActiveTodoCount(count)
+  }, [])
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme')
@@ -31,7 +50,7 @@ function App() {
 
   return (
     <div className="app">
-      <Navbar theme={theme} onToggleTheme={toggleTheme} />
+      <Navbar theme={theme} onToggleTheme={toggleTheme} activeTodoCount={activeTodoCount} />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -39,6 +58,7 @@ function App() {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/repos" element={<GithubRepos />} />
+          <Route path="/todo" element={<TodoPage onTaskCountChange={handleTaskCountChange} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

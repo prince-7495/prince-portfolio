@@ -8,9 +8,10 @@ const NAV_LINKS = [
   { label: 'Projects', to: '/projects' },
   { label: 'Contact', to: '/contact' },
   { label: 'GitHub Repos', to: '/repos' },
+  { label: 'To-Do', to: '/todo' },
 ]
 
-export default function Navbar({ theme, onToggleTheme }) {
+export default function Navbar({ theme, onToggleTheme, activeTodoCount = 0 }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
@@ -42,6 +43,11 @@ export default function Navbar({ theme, onToggleTheme }) {
                   className={`nav-link${isActive ? ' nav-link--active' : ''}`}
                 >
                   {link.label}
+                  {link.to === '/todo' && activeTodoCount > 0 && (
+                    <span className="nav-badge" aria-label={`${activeTodoCount} active tasks`}>
+                      {activeTodoCount}
+                    </span>
+                  )}
                 </Link>
               </li>
             )
@@ -95,11 +101,16 @@ export default function Navbar({ theme, onToggleTheme }) {
                 onClick={() => setMenuOpen(false)}
               >
                 {link.label}
+                {link.to === '/todo' && activeTodoCount > 0 && (
+                  <span className="nav-badge" aria-label={`${activeTodoCount} active tasks`}>
+                    {activeTodoCount}
+                  </span>
+                )}
               </Link>
             )
           })}
           <a
-            href="https://github.com/kinari3007"
+            href="https://github.com/prince-7495"
             target="_blank"
             rel="noreferrer"
             className="mobile-link mobile-cta"

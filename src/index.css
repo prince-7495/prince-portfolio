@@ -90,3 +90,336 @@ h1, h2, h3, h4, p {
 html {
   scroll-behavior: smooth;
 }
+
+/* ═══════════════════════════════════════════════════════
+   TodoPage — all styles use existing CSS variables so
+   they automatically adapt to light / dark theme toggle
+   ═══════════════════════════════════════════════════════ */
+
+.todo-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 100px 24px 72px; /* top clears fixed navbar */
+}
+
+.todo-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Header ── */
+.todo-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── Add-task form ── */
+.todo-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.todo-input {
+  flex: 1 1 200px;
+  padding: 11px 16px;
+  border: 1px solid var(--control-border);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--surface-background);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.todo-input:focus {
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.todo-date {
+  padding: 11px 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: var(--text-secondary);
+  background: var(--surface-background);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.todo-date:focus {
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.todo-add-btn {
+  padding: 11px 22px;
+  border: none;
+  border-radius: 12px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.todo-add-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+/* ── Filter row ── */
+.todo-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.todo-filters {
+  display: flex;
+  gap: 6px;
+}
+
+.todo-filter-btn {
+  padding: 6px 16px;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.todo-filter-btn:hover {
+  background: var(--control-background);
+  color: var(--text-primary);
+}
+
+.todo-filter-btn--active {
+  background: var(--link-color);
+  border-color: var(--link-color);
+  color: #fff;
+}
+
+.todo-filter-btn--active:hover {
+  background: var(--link-color);
+  filter: brightness(1.1);
+}
+
+/* Clear Completed */
+.todo-clear-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 999px;
+  background: transparent;
+  color: #ef4444;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+
+.todo-clear-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* ── Empty state ── */
+.todo-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  padding: 48px 0;
+}
+
+/* ── Task list ── */
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Task item ── */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-background);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, opacity 0.15s;
+  cursor: default;
+  user-select: none;
+}
+
+.todo-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--card-shadow);
+  border-color: var(--link-color);
+}
+
+/* Completed — muted & struck-through */
+.todo-item--done {
+  opacity: 0.55;
+}
+
+.todo-item--done .todo-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Overdue — amber left-border accent */
+.todo-item--overdue {
+  border-left: 3px solid #f59e0b;
+  background: rgba(245, 158, 11, 0.04);
+}
+
+/* Drag states */
+.todo-item--dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+
+.todo-item--drag-over {
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 2px var(--link-color);
+  transform: scale(1.01);
+}
+
+/* Drag handle */
+.todo-drag-handle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  cursor: grab;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.todo-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Checkbox */
+.todo-checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--link-color);
+  cursor: pointer;
+}
+
+/* Body: title + due date */
+.todo-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Editable title — click-to-edit span */
+.todo-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  transition: background 0.15s;
+  word-break: break-word;
+}
+
+.todo-title:hover {
+  background: rgba(14, 165, 233, 0.08);
+}
+
+/* Inline edit input */
+.todo-edit-input {
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--control-background);
+  border: 1px solid var(--link-color);
+  border-radius: 6px;
+  padding: 3px 8px;
+  outline: none;
+  width: 100%;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+/* Due date badge */
+.todo-due {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.todo-due--overdue {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+/* Delete button */
+.todo-delete-btn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.todo-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .todo-page {
+    padding: 90px 16px 52px;
+  }
+
+  .todo-form {
+    flex-direction: column;
+  }
+
+  .todo-date {
+    width: 100%;
+  }
+
+  .todo-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .todo-clear-btn {
+    margin-left: 0;
+  }
+}

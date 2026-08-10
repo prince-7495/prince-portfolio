@@ -1,5 +1,5 @@
 .about {
-  background: white;
+  background: var(--page-gradient);
 }
 
 .about-grid {
@@ -10,8 +10,8 @@
 }
 
 .about-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-background);
+  border: 1px solid var(--surface-border);
   border-radius: 18px;
   padding: 24px 28px;
 }

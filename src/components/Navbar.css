@@ -6,10 +6,11 @@
   z-index: 100;
   padding: 16px 32px;
   transition: background 0.3s ease, box-shadow 0.3s ease;
+  background: var(--nav-background);
 }
 
 .navbar--scrolled {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--nav-scrolled);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 1px 20px rgba(15, 23, 42, 0.08);
@@ -27,7 +28,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #0f172a;
+  color: var(--nav-text);
   font-weight: 700;
   font-size: 1rem;
   flex-shrink: 0;
@@ -48,7 +49,7 @@
 }
 
 .logo-name {
-  color: #0f172a;
+  color: var(--nav-text);
   font-weight: 700;
 }
 
@@ -67,28 +68,39 @@
   border-radius: 999px;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--text-secondary);
   transition: background 0.2s, color 0.2s;
 }
 
 .nav-link:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: rgba(14, 165, 233, 0.12);
+  color: var(--link-hover);
+}
+
+/* Active route highlight — filled pill matching the button gradient */
+.nav-link--active {
+  background: rgba(14, 165, 233, 0.15);
+  color: var(--link-color);
+  font-weight: 700;
+}
+
+.nav-link--active:hover {
+  background: rgba(14, 165, 233, 0.22);
 }
 
 .navbar-cta {
   padding: 8px 18px;
   border-radius: 999px;
-  background: #0f172a;
-  color: #f8fafc;
+  background: var(--button-bg);
+  color: var(--button-text);
   font-size: 0.9rem;
   font-weight: 600;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s, transform 0.2s, filter 0.2s;
   white-space: nowrap;
 }
 
 .navbar-cta:hover {
-  background: #1e293b;
+  filter: brightness(0.95);
   transform: translateY(-1px);
 }
 
@@ -103,11 +115,28 @@
   margin-left: auto;
 }
 
+.theme-toggle-btn {
+  border: 1px solid var(--control-border);
+  background: var(--surface-background);
+  color: var(--nav-text);
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 16px;
+  transition: background 0.2s, transform 0.2s, color 0.2s;
+}
+
+.theme-toggle-btn:hover {
+  transform: translateY(-1px);
+  background: var(--control-background);
+}
+
 .burger-bar {
   display: block;
   width: 22px;
   height: 2px;
-  background: #0f172a;
+  background: var(--text-primary);
   border-radius: 2px;
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
@@ -129,25 +158,32 @@
   flex-direction: column;
   gap: 2px;
   padding: 12px 24px 20px;
-  background: rgba(255, 255, 255, 0.97);
-  border-top: 1px solid #e2e8f0;
+  background: var(--surface-background);
+  border-top: 1px solid var(--surface-border);
 }
 
 .mobile-link {
   padding: 12px 16px;
   font-size: 1rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-secondary);
   border-radius: 12px;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 
 .mobile-link:hover {
-  background: #f1f5f9;
+  background: var(--control-background);
+  color: var(--text-primary);
+}
+
+/* Active state for mobile links */
+.mobile-link--active {
+  color: var(--link-color);
+  font-weight: 700;
 }
 
 .mobile-cta {
-  color: #0ea5e9;
+  color: var(--link-color);
 }
 
 @media (max-width: 768px) {

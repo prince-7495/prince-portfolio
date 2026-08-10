@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './Hero.css'
 
 export default function Hero() {
@@ -26,13 +27,13 @@ export default function Hero() {
           </p>
 
           <div className="hero-actions">
-            <a href="#projects" className="btn-hero-primary" aria-label="View my projects">
+            <Link to="/projects" className="btn-hero-primary" aria-label="View my projects">
               View Projects
               <span aria-hidden="true">→</span>
-            </a>
-            <a href="#contact" className="btn-hero-secondary" aria-label="Contact me">
+            </Link>
+            <Link to="/contact" className="btn-hero-secondary" aria-label="Contact me">
               Let's Talk
-            </a>
+            </Link>
           </div>
 
           <div className="hero-stats" role="list" aria-label="Key stats">

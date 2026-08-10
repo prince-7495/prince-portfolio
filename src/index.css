@@ -1,13 +1,65 @@
 :root {
+  color-scheme: light;
   font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #0f172a;
-  background: #f8fafc;
+  color: var(--text-primary);
+  background: var(--page-background);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --page-background: #f8fafc;
+  --page-gradient: linear-gradient(160deg, #f0f9ff 0%, #e0f2fe 40%, #ede9fe 100%);
+  --section-background: rgba(255, 255, 255, 0.82);
+  --section-border: rgba(148, 163, 184, 0.2);
+  --surface-background: #f8fafc;
+  --surface-border: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --link-color: #0ea5e9;
+  --link-hover: #0c4a6e;
+  --card-gradient: linear-gradient(160deg, #f8fafc 0%, #ede9fe 100%);
+  --button-bg: linear-gradient(90deg, #0ea5e9, #6366f1);
+  --button-text: white;
+  --nav-background: transparent;
+  --nav-scrolled: rgba(255, 255, 255, 0.9);
+  --nav-text: #0f172a;
+  --nav-border: #e2e8f0;
+  --card-shadow: rgba(15, 23, 42, 0.06);
+  --control-background: #f1f5f9;
+  --control-border: #cbd5e1;
+  --success-background: #dcfce7;
+  --success-border: #86efac;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --page-background: #020617;
+  --page-gradient: linear-gradient(160deg, #020617 0%, #111827 40%, #1f2937 100%);
+  --section-background: rgba(15, 23, 42, 0.84);
+  --section-border: rgba(71, 85, 105, 0.18);
+  --surface-background: #111827;
+  --surface-border: rgba(148, 163, 184, 0.12);
+  --text-primary: #e2e8f0;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --link-color: #60a5fa;
+  --link-hover: #93c5fd;
+  --card-gradient: linear-gradient(160deg, #0f172a 0%, #111827 40%, #1e293b 100%);
+  --button-bg: linear-gradient(90deg, #38bdf8, #818cf8);
+  --button-text: white;
+  --nav-background: rgba(15, 23, 42, 0.85);
+  --nav-scrolled: rgba(15, 23, 42, 0.95);
+  --nav-text: #f8fafc;
+  --nav-border: rgba(100, 116, 139, 0.18);
+  --card-shadow: rgba(0, 0, 0, 0.4);
+  --control-background: #1f2937;
+  --control-border: #334155;
+  --success-background: #064e3b;
+  --success-border: #16a34a;
 }
 
 * {
@@ -18,7 +70,9 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: linear-gradient(160deg, #f0f9ff 0%, #e0f2fe 40%, #ede9fe 100%);
+  background: var(--page-gradient);
+  color: var(--text-primary);
+  transition: background 0.35s ease, color 0.35s ease;
 }
 
 #root {

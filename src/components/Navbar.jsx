@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import './Navbar.css'
 
 const NAV_LINKS = [
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', to: '/' },
+  { label: 'Skills', to: '/skills' },
+  { label: 'Projects', to: '/projects' },
+  { label: 'Contact', to: '/contact' },
+  { label: 'GitHub Repos', to: '/repos' },
 ]
 
-export default function Navbar() {
+export default function Navbar({ theme, onToggleTheme }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const location = useLocation()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -27,12 +30,33 @@ export default function Navbar() {
         </a>
 
         <ul className="navbar-links" role="list">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <a href={link.href} className="nav-link">{link.label}</a>
-            </li>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const isActive =
+              link.to === '/'
+                ? location.pathname === '/'
+                : location.pathname.startsWith(link.to)
+            return (
+              <li key={link.to}>
+                <Link
+                  to={link.to}
+                  className={`nav-link${isActive ? ' nav-link--active' : ''}`}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            )
+          })}
         </ul>
+
+        <button
+          type="button"
+          className="theme-toggle-btn"
+          onClick={onToggleTheme}
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
 
         <a
           href="https://github.com/prince-7495"
@@ -58,18 +82,24 @@ export default function Navbar() {
 
       {menuOpen && (
         <div className="mobile-menu" role="navigation" aria-label="Mobile navigation">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="mobile-link"
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const isActive =
+              link.to === '/'
+                ? location.pathname === '/'
+                : location.pathname.startsWith(link.to)
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`mobile-link${isActive ? ' mobile-link--active' : ''}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
           <a
-            href="https://github.com/prince-7495"
+            href="https://github.com/kinari3007"
             target="_blank"
             rel="noreferrer"
             className="mobile-link mobile-cta"

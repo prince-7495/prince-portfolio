@@ -1,6 +1,29 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Contact.css'
 
 export default function Contact() {
+  const navigate = useNavigate()
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      alert('Please enter your name, email, and message before sending.')
+      return
+    }
+
+    setSubmitted(true)
+    setName('')
+    setEmail('')
+    setMessage('')
+    navigate('/non-existent-route')
+  }
+
   return (
     <section className="section contact" id="contact" aria-labelledby="contact-heading">
       <span className="section-label" aria-hidden="true">Contact</span>
@@ -19,14 +42,14 @@ export default function Contact() {
 
           <div className="contact-methods">
             <a
-              href="mailto:princevaghasiya7495@gmail.com"
+              href="mailto:vaghasiyaprince99@gmail.com"
               className="contact-method"
               aria-label="Send email to Prince"
             >
               <span className="method-icon" aria-hidden="true">✉️</span>
               <div>
                 <span className="method-label">Email me</span>
-                <span className="method-value">princevaghasiya7495@gmail.com</span>
+                <span className="method-value">vaghasiyaprince99@gmail.com</span>
               </div>
             </a>
 
@@ -62,6 +85,57 @@ export default function Contact() {
               </div>
             </a>
           </div>
+
+          <form className="contact-form" onSubmit={handleSubmit}>
+            <h3 className="contact-form-title">Send a Message</h3>
+
+            <label className="form-label" htmlFor="contact-name">
+              Name
+            </label>
+            <input
+              id="contact-name"
+              className="form-input"
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Your name"
+              required
+            />
+
+            <label className="form-label" htmlFor="contact-email">
+              Email
+            </label>
+            <input
+              id="contact-email"
+              className="form-input"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              required
+            />
+
+            <label className="form-label" htmlFor="contact-message">
+              Message
+            </label>
+            <textarea
+              id="contact-message"
+              className="form-textarea"
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              placeholder="Tell me about your project or opportunity..."
+              rows="5"
+              required
+            />
+
+            <button type="submit" className="contact-submit-btn">
+              Send Message
+            </button>
+
+            {submitted && (
+              <p className="submit-success">Your message has been sent! I will get back to you soon.</p>
+            )}
+          </form>
         </div>
 
         <div className="contact-info card-glass">
@@ -86,7 +160,7 @@ export default function Contact() {
           </ul>
 
           <a
-            href="mailto:princevaghasiya7495@gmail.com"
+            href="mailto:vaghasiyaprince99@gmail.com"
             className="contact-cta-btn"
             aria-label="Start a conversation via email"
           >

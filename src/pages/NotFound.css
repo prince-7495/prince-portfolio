@@ -1,0 +1,16 @@
+.notfound {
+  text-align: center;
+  padding: 120px 24px;
+  min-height: calc(100vh - 180px);
+}
+
+.notfound .section-title,
+.notfound .section-sub {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.notfound .btn-hero-primary {
+  margin-top: 28px;
+}

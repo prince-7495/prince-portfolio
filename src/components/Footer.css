@@ -1,5 +1,5 @@
 .footer {
-  background: #0f172a;
+  background: var(--surface-background);
   padding: 32px 24px;
 }
 
@@ -16,12 +16,12 @@
 .footer-brand {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary);
 }
 
 .footer-copy {
   font-size: 0.82rem;
-  color: #64748b;
+  color: var(--text-muted);
   margin-top: 4px;
 }
 
@@ -37,14 +37,14 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  background: var(--control-background);
+  color: var(--text-secondary);
   transition: background 0.2s, color 0.2s, transform 0.2s;
 }
 
 .footer-link:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #f8fafc;
+  background: var(--surface-background);
+  color: var(--text-primary);
   transform: translateY(-2px);
 }
 

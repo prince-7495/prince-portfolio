@@ -13,6 +13,7 @@
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
     "mongoose": "^9.10.1",
+    "node-cache": "^5.1.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1"

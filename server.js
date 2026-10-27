@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const Task = require('./models/Task');
+const cacheModule = require('./config/cache');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,23 +30,76 @@ app.get('/', (req, res) => {
 });
 
 app.get('/tasks', asyncHandler(async (req, res) => {
-  const tasks = await Task.find();
-  res.status(200).json(tasks);
+  // Check cache first using cache-aside pattern
+  let tasks = cacheModule.get('all_tasks');
+  
+  if (tasks !== undefined) {
+    // Cache hit - return cached data
+    return res.status(200).json({
+      data: tasks,
+      source: 'cache',
+      timestamp: new Date().toISOString(),
+    });
+  }
+  
+  // Cache miss - fetch from MongoDB
+  tasks = await Task.find();
+  
+  // Store in cache for future requests (even if empty array)
+  cacheModule.set('all_tasks', tasks);
+  
+  // Return with cache miss indication
+  res.status(200).json({
+    data: tasks,
+    source: 'database',
+    timestamp: new Date().toISOString(),
+  });
 }));
 
 app.post('/tasks', asyncHandler(async (req, res) => {
   const task = await Task.create(req.body);
-  res.status(201).json(task);
+  
+  // Invalidate the all_tasks cache on successful creation
+  cacheModule.del('all_tasks');
+  
+  res.status(201).json({
+    data: task,
+    cacheInvalidated: 'all_tasks',
+    timestamp: new Date().toISOString(),
+  });
 }));
 
 app.get('/tasks/:id', asyncHandler(async (req, res) => {
-  const task = await Task.findById(req.params.id);
+  const cacheKey = `task_${req.params.id}`;
+  
+  // Check cache first
+  let task = cacheModule.get(cacheKey);
+  
+  if (task !== undefined) {
+    // Cache hit - return cached data
+    return res.status(200).json({
+      data: task,
+      source: 'cache',
+      timestamp: new Date().toISOString(),
+    });
+  }
+  
+  // Cache miss - fetch from MongoDB
+  task = await Task.findById(req.params.id);
 
   if (!task) {
     return res.status(404).json({ error: 'Task not found' });
   }
 
-  res.status(200).json(task);
+  // Store in cache for future requests
+  cacheModule.set(cacheKey, task);
+  
+  // Return with cache miss indication
+  res.status(200).json({
+    data: task,
+    source: 'database',
+    timestamp: new Date().toISOString(),
+  });
 }));
 
 app.put('/tasks/:id', asyncHandler(async (req, res) => {
@@ -58,7 +112,15 @@ app.put('/tasks/:id', asyncHandler(async (req, res) => {
     return res.status(404).json({ error: 'Task not found' });
   }
 
-  res.status(200).json(task);
+  // Invalidate both all_tasks and individual task cache on successful update
+  cacheModule.del('all_tasks');
+  cacheModule.del(`task_${req.params.id}`);
+  
+  res.status(200).json({
+    data: task,
+    cacheInvalidated: ['all_tasks', `task_${req.params.id}`],
+    timestamp: new Date().toISOString(),
+  });
 }));
 
 app.patch('/tasks/:id', asyncHandler(async (req, res) => {
@@ -71,7 +133,15 @@ app.patch('/tasks/:id', asyncHandler(async (req, res) => {
     return res.status(404).json({ error: 'Task not found' });
   }
 
-  res.status(200).json(task);
+  // Invalidate both all_tasks and individual task cache on successful update
+  cacheModule.del('all_tasks');
+  cacheModule.del(`task_${req.params.id}`);
+  
+  res.status(200).json({
+    data: task,
+    cacheInvalidated: ['all_tasks', `task_${req.params.id}`],
+    timestamp: new Date().toISOString(),
+  });
 }));
 
 app.delete('/tasks/:id', asyncHandler(async (req, res) => {
@@ -81,11 +151,46 @@ app.delete('/tasks/:id', asyncHandler(async (req, res) => {
     return res.status(404).json({ error: 'Task not found' });
   }
 
+  // Invalidate both all_tasks and individual task cache on successful deletion
+  cacheModule.del('all_tasks');
+  cacheModule.del(`task_${req.params.id}`);
+  
   res.status(200).json({
     message: 'Task deleted successfully',
-    task,
+    data: task,
+    cacheInvalidated: ['all_tasks', `task_${req.params.id}`],
+    timestamp: new Date().toISOString(),
   });
 }));
+
+// Debug endpoint: Cache statistics
+app.get('/debug/cache-stats', (req, res) => {
+  const stats = cacheModule.getStats();
+  res.status(200).json({
+    message: 'Cache Statistics',
+    cacheStats: stats,
+    ttlSeconds: 60,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Debug endpoint: Reset cache statistics (for testing purposes)
+app.post('/debug/cache-reset', (req, res) => {
+  cacheModule.resetStats();
+  res.status(200).json({
+    message: 'Cache statistics reset',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Debug endpoint: Clear all cache (for testing purposes)
+app.post('/debug/cache-flush', (req, res) => {
+  cacheModule.flush();
+  res.status(200).json({
+    message: 'Cache flushed',
+    timestamp: new Date().toISOString(),
+  });
+});
 
 app.use((err, req, res, next) => {
   console.error(err);

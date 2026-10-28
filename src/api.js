@@ -4,11 +4,48 @@
  * 
  * URL: http://localhost:5000 (development)
  * Can be configured via environment variables
+ * 
+ * Authentication: JWT token from localStorage is automatically attached to all requests
+ * via the Authorization header (Bearer token)
  */
 
 // Base URL for backend API
 // Uses Vite environment variable if available, otherwise defaults to localhost:5000
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+/**
+ * Get the JWT token from localStorage
+ * @returns {string|null} - JWT token or null if not found
+ */
+function getAuthToken() {
+  try {
+    const token = localStorage.getItem('authToken');
+    return token;
+  } catch (e) {
+    console.warn('Failed to retrieve auth token from localStorage:', e);
+    return null;
+  }
+}
+
+/**
+ * Build request headers with authentication
+ * Includes Authorization header if token is available
+ * @param {Object} additionalHeaders - Additional headers to merge
+ * @returns {Object} - Complete headers object with auth if available
+ */
+function buildHeaders(additionalHeaders = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...additionalHeaders,
+  };
+
+  const token = getAuthToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+}
 
 /**
  * Helper function to handle fetch responses
@@ -43,12 +80,15 @@ async function handleResponse(response) {
 
 /**
  * Fetch all tasks from the backend
+ * Requires authentication token in Authorization header
  * @returns {Promise<Array>} - Array of task objects from MongoDB
- * @throws {Error} - Network error or server error
+ * @throws {Error} - Network error, server error, or authentication error
  */
 export async function getTasks() {
   try {
-    const response = await fetch(`${BASE_URL}/tasks`);
+    const response = await fetch(`${BASE_URL}/tasks`, {
+      headers: buildHeaders(),
+    });
     return await handleResponse(response);
   } catch (error) {
     throw new Error(`Failed to fetch tasks: ${error.message}`);
@@ -57,16 +97,19 @@ export async function getTasks() {
 
 /**
  * Fetch a single task by ID
+ * Requires authentication token in Authorization header
  * @param {string} id - MongoDB task ID
  * @returns {Promise<Object>} - Task object
- * @throws {Error} - Task not found or server error
+ * @throws {Error} - Task not found, authentication error, or server error
  */
 export async function getTaskById(id) {
   if (!id) {
     throw new Error('Task ID is required');
   }
   try {
-    const response = await fetch(`${BASE_URL}/tasks/${id}`);
+    const response = await fetch(`${BASE_URL}/tasks/${id}`, {
+      headers: buildHeaders(),
+    });
     return await handleResponse(response);
   } catch (error) {
     throw new Error(`Failed to fetch task: ${error.message}`);
@@ -75,9 +118,10 @@ export async function getTaskById(id) {
 
 /**
  * Create a new task
+ * Requires authentication token in Authorization header
  * @param {Object} taskData - Task object { title, description, priority, completed }
  * @returns {Promise<Object>} - Created task with MongoDB _id
- * @throws {Error} - Validation error or server error
+ * @throws {Error} - Validation error, authentication error, or server error
  */
 export async function createTask(taskData) {
   if (!taskData.title || !taskData.title.trim()) {
@@ -87,9 +131,7 @@ export async function createTask(taskData) {
   try {
     const response = await fetch(`${BASE_URL}/tasks`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: buildHeaders(),
       body: JSON.stringify(taskData),
     });
     return await handleResponse(response);
@@ -100,10 +142,11 @@ export async function createTask(taskData) {
 
 /**
  * Update an existing task (full update)
+ * Requires authentication token in Authorization header
  * @param {string} id - MongoDB task ID
  * @param {Object} taskData - Updated task object
  * @returns {Promise<Object>} - Updated task from database
- * @throws {Error} - Task not found or server error
+ * @throws {Error} - Task not found, authentication error, or server error
  */
 export async function updateTask(id, taskData) {
   if (!id) {
@@ -113,9 +156,7 @@ export async function updateTask(id, taskData) {
   try {
     const response = await fetch(`${BASE_URL}/tasks/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: buildHeaders(),
       body: JSON.stringify(taskData),
     });
     return await handleResponse(response);
@@ -126,10 +167,11 @@ export async function updateTask(id, taskData) {
 
 /**
  * Partially update a task
+ * Requires authentication token in Authorization header
  * @param {string} id - MongoDB task ID
  * @param {Object} updates - Partial task updates (only provided fields)
  * @returns {Promise<Object>} - Updated task from database
- * @throws {Error} - Task not found or server error
+ * @throws {Error} - Task not found, authentication error, or server error
  */
 export async function patchTask(id, updates) {
   if (!id) {
@@ -139,9 +181,7 @@ export async function patchTask(id, updates) {
   try {
     const response = await fetch(`${BASE_URL}/tasks/${id}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: buildHeaders(),
       body: JSON.stringify(updates),
     });
     return await handleResponse(response);
@@ -152,9 +192,10 @@ export async function patchTask(id, updates) {
 
 /**
  * Delete a task by ID
+ * Requires authentication token in Authorization header
  * @param {string} id - MongoDB task ID
  * @returns {Promise<Object>} - Response confirming deletion
- * @throws {Error} - Task not found or server error
+ * @throws {Error} - Task not found, authentication error, or server error
  */
 export async function deleteTask(id) {
   if (!id) {
@@ -164,9 +205,7 @@ export async function deleteTask(id) {
   try {
     const response = await fetch(`${BASE_URL}/tasks/${id}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: buildHeaders(),
     });
     return await handleResponse(response);
   } catch (error) {

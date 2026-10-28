@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 import './Navbar.css'
 
 const NAV_LINKS = [
@@ -15,12 +16,20 @@ export default function Navbar({ theme, onToggleTheme, activeTodoCount = 0 }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, isAuthenticated, logout } = useAuth()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  function handleLogout() {
+    logout()
+    navigate('/')
+    setMenuOpen(false)
+  }
 
   return (
     <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} role="banner">
@@ -64,11 +73,30 @@ export default function Navbar({ theme, onToggleTheme, activeTodoCount = 0 }) {
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
 
+        {isAuthenticated && user ? (
+          <div className="navbar-user">
+            <span className="navbar-user-name" title={user.name}>
+              👤 {user.name}
+            </span>
+            <button
+              className="navbar-logout-btn"
+              onClick={handleLogout}
+              aria-label="Logout"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link to="/login" className="navbar-cta">
+            Sign In
+          </Link>
+        )}
+
         <a
           href="https://github.com/prince-7495"
           target="_blank"
           rel="noreferrer"
-          className="navbar-cta"
+          className="navbar-github"
           aria-label="View Prince's GitHub profile"
         >
           GitHub
@@ -109,11 +137,34 @@ export default function Navbar({ theme, onToggleTheme, activeTodoCount = 0 }) {
               </Link>
             )
           })}
+          
+          {isAuthenticated && user ? (
+            <>
+              <div className="mobile-user-section">
+                <span className="mobile-user-name">👤 {user.name}</span>
+                <button
+                  className="mobile-logout-btn"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </div>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="mobile-link mobile-cta"
+              onClick={() => setMenuOpen(false)}
+            >
+              Sign In
+            </Link>
+          )}
+          
           <a
             href="https://github.com/prince-7495"
             target="_blank"
             rel="noreferrer"
-            className="mobile-link mobile-cta"
+            className="mobile-link mobile-github"
           >
             GitHub ↗
           </a>

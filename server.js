@@ -5,6 +5,8 @@ require('dotenv').config();
 
 const Task = require('./models/Task');
 const cacheModule = require('./config/cache');
+const authRoutes = require('./routes/authRoutes');
+const { protect } = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,7 +17,7 @@ app.use(cors({
   origin: CLIENT_URL,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Body parser middleware
@@ -40,7 +42,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'Task API is running' });
 });
 
-app.get('/tasks', asyncHandler(async (req, res) => {
+// Authentication routes
+app.use('/auth', authRoutes);
+
+app.get('/tasks', protect, asyncHandler(async (req, res) => {
   // Check cache first using cache-aside pattern
   let tasks = cacheModule.get('all_tasks');
   
@@ -67,7 +72,7 @@ app.get('/tasks', asyncHandler(async (req, res) => {
   });
 }));
 
-app.post('/tasks', asyncHandler(async (req, res) => {
+app.post('/tasks', protect, asyncHandler(async (req, res) => {
   const task = await Task.create(req.body);
   
   // Invalidate the all_tasks cache on successful creation
@@ -80,7 +85,7 @@ app.post('/tasks', asyncHandler(async (req, res) => {
   });
 }));
 
-app.get('/tasks/:id', asyncHandler(async (req, res) => {
+app.get('/tasks/:id', protect, asyncHandler(async (req, res) => {
   const cacheKey = `task_${req.params.id}`;
   
   // Check cache first
@@ -113,7 +118,7 @@ app.get('/tasks/:id', asyncHandler(async (req, res) => {
   });
 }));
 
-app.put('/tasks/:id', asyncHandler(async (req, res) => {
+app.put('/tasks/:id', protect, asyncHandler(async (req, res) => {
   const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -134,7 +139,7 @@ app.put('/tasks/:id', asyncHandler(async (req, res) => {
   });
 }));
 
-app.patch('/tasks/:id', asyncHandler(async (req, res) => {
+app.patch('/tasks/:id', protect, asyncHandler(async (req, res) => {
   const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -155,7 +160,7 @@ app.patch('/tasks/:id', asyncHandler(async (req, res) => {
   });
 }));
 
-app.delete('/tasks/:id', asyncHandler(async (req, res) => {
+app.delete('/tasks/:id', protect, asyncHandler(async (req, res) => {
   const task = await Task.findByIdAndDelete(req.params.id);
 
   if (!task) {

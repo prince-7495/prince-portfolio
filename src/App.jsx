@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
+import { AuthProvider, AuthContext } from './context/AuthContext'
+import { useAuth } from './hooks/useAuth'
+import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -9,6 +12,8 @@ import ProjectsPage from './pages/ProjectsPage'
 import ContactPage from './pages/ContactPage'
 import NotFound from './pages/NotFound'
 import GithubRepos from './pages/GithubRepos'
+import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 import TodoPage from './pages/TodoPage'
 
 const TODO_STORAGE_KEY = 'portfolio-todos'
@@ -23,14 +28,23 @@ function loadActiveTodoCount() {
   }
 }
 
-function App() {
+function AppContent() {
   const [theme, setTheme] = useState('light')
   const [activeTodoCount, setActiveTodoCount] = useState(loadActiveTodoCount)
+  const { login, signup } = useAuth()
 
   // Stable callback so TodoPage's useEffect dependency never causes extra renders
   const handleTaskCountChange = useCallback((count) => {
     setActiveTodoCount(count)
   }, [])
+
+  const handleLogin = useCallback((user, token) => {
+    login(user, token)
+  }, [login])
+
+  const handleSignup = useCallback((user, token) => {
+    signup(user, token)
+  }, [signup])
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme')
@@ -58,12 +72,29 @@ function App() {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/repos" element={<GithubRepos />} />
-          <Route path="/todo" element={<TodoPage onTaskCountChange={handleTaskCountChange} />} />
+          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+          <Route path="/signup" element={<SignupPage onSignup={handleSignup} />} />
+          <Route
+            path="/todo"
+            element={
+              <ProtectedRoute>
+                <TodoPage onTaskCountChange={handleTaskCountChange} />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />
     </div>
+  )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }
 

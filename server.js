@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -7,7 +8,17 @@ const cacheModule = require('./config/cache');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
+// CORS configuration - allow frontend to communicate with backend
+app.use(cors({
+  origin: CLIENT_URL,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type'],
+}));
+
+// Body parser middleware
 app.use(express.json());
 
 const mongoUri = process.env.MONGO_URI;
